@@ -1,0 +1,15 @@
+how do i sort a list of objects in python?
+explain this sql query
+This paragraph sounds awkward, can you help me fix it?
+I'm preparing for a job interview
+what's the average of numbers 12,45,23
+Help me make this better
+I need help with my resume
+hey
+write a poem about clouds
+Rewrite this sentence professionally
+I don't know what career to choose
+what is a pivot table
+fix this bug: for i in range(10) print(i)
+How do I structure a cover letter
+My boss says my writing is too verbose

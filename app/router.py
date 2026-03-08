@@ -1,25 +1,45 @@
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
 from prompts import SYSTEM_PROMPTS
+
+load_dotenv()
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def route_and_respond(message: str, intent_data: dict):
 
     intent = intent_data["intent"]
 
-    # If intent unclear
     if intent == "unclear":
-        return "I couldn't clearly understand your request. Are you asking about coding, data analysis, writing help, or career advice?"
+        return "I'm not sure what you need. Are you asking about coding, data analysis, writing help, or career advice?"
 
-    # Simulated responses (since API is disabled)
-    if intent == "code":
-        return "To sort a list in Python you can use the built-in sorted() function or list.sort(). Example:\n\nnumbers = [3,1,4,2]\nnumbers.sort()\nprint(numbers)"
+    system_prompt = SYSTEM_PROMPTS.get(intent)
 
-    elif intent == "data":
-        return "To analyze data you can calculate statistics such as mean, median, and distribution. A bar chart or histogram would help visualize patterns."
+    try:
+        # Try LLM response generation
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": message}
+            ]
+        )
 
-    elif intent == "writing":
-        return "Your writing may contain issues like passive voice or verbosity. Try shortening sentences and using active voice for clarity."
+        return response.choices[0].message.content
 
-    elif intent == "career":
-        return "To improve your career prospects, start by identifying your goals, improving relevant skills, and preparing a strong resume and portfolio."
+    except Exception:
+        # Fallback responses
+        if intent == "code":
+            return "Example Python sorting:\n\nnumbers = [3,1,4,2]\nnumbers.sort()\nprint(numbers)"
 
-    else:
-        return "I'm not sure how to respond to that request."
+        elif intent == "data":
+            return "A pivot table summarizes data by grouping values. It is commonly used in Excel for analyzing datasets."
+
+        elif intent == "writing":
+            return "Your writing may be verbose. Try using shorter sentences and active voice."
+
+        elif intent == "career":
+            return "Start by identifying your career goals, improving skills, and preparing a strong resume."
+
+        return "Unable to generate response."
